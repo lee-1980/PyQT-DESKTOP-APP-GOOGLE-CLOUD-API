@@ -21,6 +21,7 @@ class Ui_IqOptionBot(object):
     # If modifying these scopes, delete the file token.json.
     SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
     stop_thread = False
+    sheet_api_running = False
     login = False
     SAMPLE_SPREADSHEET_ID_input = ''
     bot_timeinterval = 6
@@ -164,10 +165,10 @@ class Ui_IqOptionBot(object):
         self.pushButton.setEnabled(False)
         username = self.lineEdit.text().strip()
         password = self.lineEdit_2.text().strip()
-        self.API_connection = IQ_Option('apurbo.hello88@gmail.com', 'jjhpph_2021922st@art')
+        self.API_connection = IQ_Option('Fserranovieira@hotmail.com', '@Laila241186')
         iqch1, iqch2 = self.API_connection.connect()  # connect to iqoption
-        balance_type = "PRACTICE"
-        self.API_connection.change_balance(balance_type)
+        self.balance_type = "PRACTICE"
+        self.API_connection.change_balance(self.balance_type)
         if iqch1 == True:
             self.lineEdit_3.setText('Success')
             self.lineEdit_3.setStyleSheet("color:rgb(85, 170, 0);")
@@ -199,7 +200,7 @@ class Ui_IqOptionBot(object):
     def run(self):
         if not self.login:
             return
-        # self.SAMPLE_SPREADSHEET_ID_input = self.lineEdit_6.text().strip()
+        self.SAMPLE_SPREADSHEET_ID_input = self.lineEdit_6.text().strip()
         self.SAMPLE_SPREADSHEET_ID_input = '1YTQPSIGq0Wt5_5_Dan6bghDmTYl2u_zGwzA7IJH79EI'
         bot_timeinterval = self.lineEdit_4.text().strip()
         if not self.SAMPLE_SPREADSHEET_ID_input or not bot_timeinterval or not bot_timeinterval.isnumeric():
@@ -216,8 +217,11 @@ class Ui_IqOptionBot(object):
             trading_thread.start()
             # balance_market_thread = Thread(target=self.balance_market_run)
             # balance_market_thread.start()
+            history_thread = Thread(target=self.history_run)
+            history_thread.start()
 
     def trading_run(self):
+
         if self.API_connection.check_connect() == False:
             check, reason = self.API_connection.connect()
             if not check:
@@ -227,47 +231,68 @@ class Ui_IqOptionBot(object):
             values = []
             UpdateValues = []
             try:
+                while self.sheet_api_running == True:
+                    pass
+                self.sheet_api_running = True
                 self.authenticate_google()
                 result = self.service.spreadsheets().values().get(spreadsheetId=self.SAMPLE_SPREADSHEET_ID_input,range='TRADE2!A1:T').execute()
+                self.sheet_api_running = False
                 values = result.get('values', [])
             except HttpError as err:
                 self.throw_error_exception('Error: Connecting to Google Sheet!')
-            if values and len(values) > self.sheet_header_offset:
-                for row in values[self.sheet_header_offset:]:
-                    try:
 
+            if values and len(values) > self.sheet_header_offset:
+                create_orderLimit = 0
+                for index, row in enumerate(values[self.sheet_header_offset:]):
+                    try:
+                        row_number = index + self.sheet_header_offset + 1
                         if row[1]:
-                            if row[1] == 'Open':
+                            if row[1] == 'Open' or row[1] == 'open':
+                                if create_orderLimit > 5:
+                                    continue
+                                
                                 if row[2] and dparser.parse(row[2]) > datetime.now():
                                     continue
+
                                 # Get the instrument_type
-                                instrument_id = "BTCUSD"
+                                if not row[4]:
+                                    continue
+                                instrument_id = row[4]
+
                                 instrument_type = "crypto"
                                 # Get the side/direction
                                 side = "buy"
+                                if not row[5]:
+                                    continue
+
                                 if row[5] == 'BUY' or row[5] == 'buy' or row[5] == 'Buy':
                                     side = "buy"
                                 elif row[5] == 'SELL' or row[5] == 'sell' or row[5] == 'Sell':
                                     side = 'sell'
                                 # Get the Invest amount
-                                amount = 0.01  # input how many Amount you want to play
+                                if not row[7]:
+                                    continue
+
+                                amount = float(row[7])  # input how many Amount you want to play
 
                                 # "leverage"="Multiplier"
                                 leverage = 3  # you can get more information in get_available_leverages()
 
-                                type = "market"  # input:"market"/"limit"/"stop"
-
-                                # for type="limit"/"stop"
+                                type = "limit"  # input:"market"/"limit"/"stop"
 
                                 # only working by set type="limit"
-                                limit_price = None  # input:None/value(float/int)
+                                if not row[6]:
+                                    continue
 
+                                limit_price = float(row[6])
+                                # limit_price = None
                                 # only working by set type="stop"
                                 stop_price = None  # input:None/value(float/int)
 
                                 # "percent"=Profit Percentage
                                 # "price"=Asset Price
                                 # "diff"=Profit in Money
+
                                 if row[9]:
                                     take_profit_kind = "percent"  # input:None/"price"/"diff"/"percent"
                                     take_profit_value = float(row[9].replace('%', ''))  # input:None/value(float/int)
@@ -280,13 +305,22 @@ class Ui_IqOptionBot(object):
                                 else:
                                     stop_lose_kind = None
                                     stop_lose_value = None
+                                if not take_profit_value and not stop_lose_value:
+                                    continue
+
                                 # "use_trail_stop"="Trailing Stop"
-                                use_trail_stop = True  # True/False
+                                if row[11] and row[11] == 'y':
+                                    use_trail_stop = True  # True/False
+                                else:
+                                    use_trail_stop = False  # True/False
+                                if row[12] and row[12] == 'y':
+                                    # "auto_margin_call"="Use Balance to Keep Position Open"
+                                    auto_margin_call = True  # True/False
+                                else:
+                                    # "auto_margin_call"="Use Balance to Keep Position Open"
+                                    auto_margin_call = False  # True/False
 
-                                # "auto_margin_call"="Use Balance to Keep Position Open"
-                                auto_margin_call = False  # True/False
                                 use_token_for_commission = False  # True/False
-
                                 check, order_id = self.API_connection.buy_order(instrument_type=instrument_type,
                                                                                 instrument_id=instrument_id,
                                                                                 side=side, amount=amount,
@@ -300,51 +334,258 @@ class Ui_IqOptionBot(object):
                                                                                 use_trail_stop=use_trail_stop,
                                                                                 auto_margin_call=auto_margin_call,
                                                                                 use_token_for_commission=use_token_for_commission)
-                                while self.API_connection.get_async_order(order_id) == None:
-                                    pass
-                                order_data = self.API_connection.get_async_order(order_id)
-                                print(order_data)
-                                # if check:
-                                #     print(self.API_connection.get_order(order_id))
-                                #     print(self.API_connection.get_positions("crypto"))
-                                #     print(self.API_connection.get_position_history("crypto"))
-                                #     print(self.API_connection.get_available_leverages("crypto", "BTCUSD"))
-                                #     print(self.API_connection.close_position(order_id))
-                                #     print(self.API_connection.get_overnight_fee("crypto", "BTCUSD"))
+                                create_orderLimit = create_orderLimit + 1
+                                if check:
+                                    created_order_data = self.API_connection.get_order(order_id)
+                                    date = datetime.fromtimestamp(created_order_data[1]['create_at']/1000.0)
 
-                            elif row[1] == 'Pending' or row[1] == 'Active':
-                                self.current_active_options[row[0]] = row[13]
-                                # print(self.current_active_options)
-                            elif row[1] == 'cancel':
-                                print(row)
-                    except err:
-                        print(err.error_details)
-                        continue;
+                                    UpdateValues.append({
+                                        "range": "TRADE2!B" + str(row_number),
+                                        "values": [['Pending']]
+                                    })
+                                    UpdateValues.append({
+                                        "range": "TRADE2!O" + str(row_number),
+                                        "values": [[date.strftime('%Y-%m-%d %H:%M:%S')]]
+                                    })
+                                    UpdateValues.append({
+                                        "range": "TRADE2!N" + str(row_number),
+                                        "values": [[order_id]]
+                                    })
 
+                            elif row[1] == 'Pending' or row[1] == 'pending':
+                                if row[13] and row[13].isnumeric():
+                                    check, created_order_data = self.API_connection.get_position(int(row[13]))
+                                    if check:
+                                        position = created_order_data['position']
+                                        if position['status'] == 'open' and position['close_at'] is None:
+                                            purchase_in_date = datetime.fromtimestamp(position['create_at']/1000.0)
+                                            UpdateValues.append({
+                                                "range": "TRADE2!P" + str(row_number),
+                                                "values": [[purchase_in_date.strftime('%Y-%m-%d %H:%M:%S')]]
+                                            })
+                                            UpdateValues.append({
+                                                "range": "TRADE2!B" + str(row_number),
+                                                "values": [['Active']]
+                                            })
+                                        elif position['status'] == 'closed' and position['close_at']:
+                                            orders_included = created_order_data['orders']
+
+                                            position_profit = position['pnl_realized_enrolled']
+                                            position_profit_rate = 0
+
+                                            for order_included in orders_included:
+                                                if order_included['id'] == int(row[13]):
+                                                    invest_order = order_included['margin']
+                                                    position_profit_rate = position_profit/invest_order * 100
+                                                    break
+                                            purchase_in_date = datetime.fromtimestamp(position['create_at'] / 1000.0)
+                                            UpdateValues.append({
+                                                "range": "TRADE2!P" + str(row_number),
+                                                "values": [[purchase_in_date.strftime('%Y-%m-%d %H:%M:%S')]]
+                                            })
+                                            close_in_date = datetime.fromtimestamp(position['create_at'] / 1000.0)
+                                            UpdateValues.append({
+                                                "range": "TRADE2!Q" + str(row_number),
+                                                "values": [[close_in_date.strftime('%Y-%m-%d %H:%M:%S')]]
+                                            })
+                                            UpdateValues.append({
+                                                "range": "TRADE2!B" + str(row_number),
+                                                "values": [['Close']]
+                                            })
+                                            UpdateValues.append({
+                                                "range": "TRADE2!R" + str(row_number),
+                                                "values": [[round(float(position_profit), 3)]]
+                                            })
+                                            UpdateValues.append({
+                                                "range": "TRADE2!S" + str(row_number),
+                                                "values": [[round(float(position_profit_rate), 3)]]
+                                            })
+                            elif row[1] == 'Active' or row[1] == 'active':
+                                if row[13] and row[13].isnumeric():
+                                    check, created_order_data = self.API_connection.get_position(int(row[13]))
+                                    if check:
+                                        position = created_order_data['position']
+                                        if position['status'] == 'closed' and position['close_at']:
+                                            orders_included = created_order_data['orders']
+                                            position_profit = position['pnl_realized_enrolled']
+                                            position_profit_rate = 0
+
+                                            for order_included in orders_included:
+                                                if order_included['id'] == int(row[13]):
+                                                    invest_order = order_included['margin']
+                                                    position_profit_rate = position_profit/invest_order * 100
+                                                    break
+                                            purchase_in_date = datetime.fromtimestamp(position['create_at'] / 1000.0)
+                                            UpdateValues.append({
+                                                "range": "TRADE2!P" + str(row_number),
+                                                "values": [[purchase_in_date.strftime('%Y-%m-%d %H:%M:%S')]]
+                                            })
+                                            close_in_date = datetime.fromtimestamp(position['create_at'] / 1000.0)
+                                            UpdateValues.append({
+                                                "range": "TRADE2!Q" + str(row_number),
+                                                "values": [[close_in_date.strftime('%Y-%m-%d %H:%M:%S')]]
+                                            })
+                                            UpdateValues.append({
+                                                "range": "TRADE2!B" + str(row_number),
+                                                "values": [['Close']]
+                                            })
+                                            UpdateValues.append({
+                                                "range": "TRADE2!R" + str(row_number),
+                                                "values": [[round(float(position_profit), 3)]]
+                                            })
+                                            UpdateValues.append({
+                                                "range": "TRADE2!S" + str(row_number),
+                                                "values": [[round(float(position_profit_rate), 3)]]
+                                            })
+                            elif row[1] == 'cancel' or row[1] == 'Cancel':
+                                if row[13] and row[13].isnumeric():
+                                    result = self.API_connection.cancel_order(row[13])
+                                    result1 = self.API_connection.close_position(row[13])
+                    except NameError:
+                        print(NameError.error_details)
+                        continue
+                if UpdateValues:
+                    batch_update_values_request_body = {
+                        'value_input_option': 'RAW',
+                        'data': UpdateValues,
+                    }
+                    while self.sheet_api_running == True:
+                        pass
+                    self.sheet_api_running = True
+                    self.service.spreadsheets().values().batchUpdate(
+                        spreadsheetId=self.SAMPLE_SPREADSHEET_ID_input,
+                        body=batch_update_values_request_body).execute()
+                    self.sheet_api_running = False
             else:
                 self.throw_error_exception('Error: Invalid Google Sheet Data!')
             time.sleep(self.bot_timeinterval)
 
-    def balance_market_run(self):
+    # def balance_market_run(self):
+    #
+    #     if self.API_connection.check_connect() == False:
+    #         check, reason = self.API_connection.connect()
+    #         if not check:
+    #             self.stop_thread = True
+    #
+    #     while not self.stop_thread:
+    #         balance = self.API_connection.get_balance()
+    #         currency = self.API_connection.get_currency()
+    #         positions = self.API_connection.get_positions('crypto')
+    #         investment = 0
+    #         loss = 0
+    #         print('balance')
+    #         try:
+    #             for position in positions[1]['positions']:
+    #                 margin = position['margin']
+    #                 investment = investment + margin
+    #                 # instrument_id = position['instrument_id']
+    #                 # data = self.API_connection.get_candles(instrument_id, 60, 1, time.time())
+    #                 # print((data[0]['close'] - position['open_quote_final_bid']))
+    #                 # print(margin)
+    #                 # print((data[0]['close'] - position['open_quote_final_bid']) * margin / position['open_quote_final_bid'])
+    #                 # resultPL = round((data[1]['close'] - position['open_quote_final_bid']) * margin / position['open_quote_final_bid'], 2)
+    #                 # loss = loss + resultPL
+    #         except:
+    #             print('Error in Format calculation!')
+    #
+    #         range_ = 'SUMMARY_BALANCE!A9'
+    #         value_input_option = 'USER_ENTERED'
+    #         value_range_body = {
+    #             # TODO: Add desired entries to the request body.
+    #             "majorDimension": "ROWS",
+    #             "values": [
+    #                 [datetime.now().strftime('%Y-%m-%d %H:%M:%S'), self.balance_type, '', investment, '', balance, currency]
+    #             ]
+    #         }
+    #         while self.sheet_api_running == True:
+    #             pass
+    #         self.sheet_api_running = True
+    #         self.service.spreadsheets().values().append(
+    #             spreadsheetId=self.SAMPLE_SPREADSHEET_ID_input,
+    #             range=range_,
+    #             valueInputOption=value_input_option,
+    #             body=value_range_body).execute()
+    #         self.sheet_api_running = False
+    #         time.sleep(3600)
 
+
+    def history_run(self):
         if self.API_connection.check_connect() == False:
             check, reason = self.API_connection.connect()
             if not check:
-                self.stop_thread = True
-        ACTIVES = "EURUSD"
-        duration = 1
-
+                self.throw_error_exception('Can\'t log in IQOption!')
         while not self.stop_thread:
+            try:
+                while self.sheet_api_running == True:
+                    pass
+                self.sheet_api_running = True
+                self.authenticate_google()
+                result = self.service.spreadsheets().values().get(spreadsheetId=self.SAMPLE_SPREADSHEET_ID_input,range='HISTORY_TRADES!A7:Q').execute()
+                self.sheet_api_running = False
+                values = result.get('values', [])
+            except HttpError as err:
+                self.throw_error_exception('Error: Connecting to Google Sheet!')
+            positions = []
+            last_row_time = dparser.parse('2021-01-01 00:00:01')
+            if not values or not values[-1] or not values[-1][11]:
+                millisec = int(time.mktime(last_row_time.timetuple()))
+                check, data = self.API_connection.get_position_history_v2('crypto', 100, 0, millisec, 0)
+                if check and data['positions']:
+                    positions = data['positions']
+            else:
+                last_row_time = dparser.parse(values[-1][11])
+                millisec = int(time.mktime(last_row_time.timetuple()))
+                check, data = self.API_connection.get_position_history_v2('crypto', 50, 0, millisec, 0)
+                if check and data['positions']:
+                    positions = data['positions']
+            new_values = []
+            for position in positions:
+                position_datatime = self.covertMillionTotime(position['open_time'])
+                account = self.account_type
+                investiment = position['invest']
+                result_pl = position['pnl']
+                result_pl_rate = position['pnl']/position['invest'] * 100
+                position_pos = ''
+                position_time = ''
+                position_value = position['close_quote']
+                amount = position['close_profit']
+                position_result_pl = ''
+                purhcase_time = self.covertMillionTotime(position['open_time'])
+                close_time = self.covertMillionTotime(position['close_time'])
 
-            balances = self.API_connection.get_profile_ansyc()["balances"]
+                if dparser.parse(close_time) <= last_row_time:
+                    continue
+                open_price = position['open_quote']
+                close_price = position['close_quote']
+                auto_close_at_profit = 0
+                if 'take_profit_value' in position['raw_event']['extra_data']:
+                    auto_close_at_profit = position['raw_event']['extra_data']['take_profit_value']
+                new_values.append([position_datatime, account, investiment, result_pl, result_pl_rate, position_pos, position_time, position_value, amount, result_pl, purhcase_time, close_time, open_price, close_price, auto_close_at_profit])
+            if new_values:
+                new_values.reverse()
+                range_ = 'HISTORY_TRADES!A7'
+                value_input_option = 'USER_ENTERED'
+                value_range_body = {
+                    # TODO: Add desired entries to the request body.
+                    "majorDimension": "ROWS",
+                    "values": new_values
+                }
+                while self.sheet_api_running == True:
+                    pass
+                self.sheet_api_running = True
+                self.service.spreadsheets().values().append(
+                    spreadsheetId=self.SAMPLE_SPREADSHEET_ID_input,
+                    range=range_,
+                    valueInputOption=value_input_option,
+                    body=value_range_body).execute()
+                self.sheet_api_running = False
+            time.sleep(60)
 
-            for balance in balances:
-                if balance["type"] == 1:
-                    self.balance_information['REAL'] = balance
-                if balance["type"] == 4:
-                    self.balance_information['PRACTICE'] = balance
 
-            time.sleep(10)
+    def covertMillionTotime(self, mill):
+        calculated_time = datetime.fromtimestamp(mill / 1000.0)
+        formated = calculated_time.strftime('%Y-%m-%d %H:%M:%S')
+        return formated
 
     def throw_error_exception(self, error_message):
         self.stop_thread = True
