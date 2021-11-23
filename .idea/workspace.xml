@@ -2,80 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="83af2df7-a95e-4ba9-b730-ff03703e9ba2" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/iq_bot_ui.py" beforeDir="false" afterPath="$PROJECT_DIR$/iq_bot_ui.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/api.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/constants.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/country_id.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/expiration.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/global_value.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/http/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/http/appinit.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/http/auth.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/http/billing.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/http/buyback.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/http/changebalance.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/http/events.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/http/getprofile.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/http/getregdata.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/http/login.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/http/login2fa.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/http/loginv2.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/http/logout.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/http/profile.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/http/register.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/http/resource.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/http/send_sms.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/http/token.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/http/verify.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/stable_api.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/ws/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/ws/chanels/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/ws/chanels/api_game_betinfo.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/ws/chanels/api_game_getoptions.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/ws/chanels/base.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/ws/chanels/buy_place_order_temp.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/ws/chanels/buyback.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/ws/chanels/buyv2.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/ws/chanels/buyv3.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/ws/chanels/cancel_order.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/ws/chanels/candles.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/ws/chanels/change_auto_margin_call.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/ws/chanels/change_tpsl.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/ws/chanels/changebalance.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/ws/chanels/close_position.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/ws/chanels/digital_option.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/ws/chanels/get_available_leverages.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/ws/chanels/get_balances.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/ws/chanels/get_deferred_orders.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/ws/chanels/get_financial_information.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/ws/chanels/get_order.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/ws/chanels/get_overnight_fee.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/ws/chanels/get_positions.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/ws/chanels/heartbeat.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/ws/chanels/instruments.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/ws/chanels/leaderboard.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/ws/chanels/sell_digital_option.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/ws/chanels/sell_option.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/ws/chanels/setactives.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/ws/chanels/ssid.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/ws/chanels/strike_list.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/ws/chanels/subscribe.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/ws/chanels/technical_indicators.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/ws/chanels/traders_mood.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/ws/chanels/unsubscribe.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/ws/chanels/user.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/ws/client.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/ws/objects/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/ws/objects/base.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/ws/objects/betinfo.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/ws/objects/candles.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/ws/objects/listinfodata.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/ws/objects/profile.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/iqoptionapi/ws/objects/timesync.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/token.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/token.json" beforeDir="false" afterPath="$PROJECT_DIR$/token.json" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -84,7 +12,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="CoverageDataManager">
-    <SUITE FILE_PATH="coverage/PyQT_DESKTOP_APP_GOOGLE_CLOUD_API$iq_bot.coverage" NAME="iq_bot Coverage Results" MODIFIED="1637665743831" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/.." />
+    <SUITE FILE_PATH="coverage/PyQT_DESKTOP_APP_GOOGLE_CLOUD_API$iq_bot.coverage" NAME="iq_bot Coverage Results" MODIFIED="1637678722108" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/.." />
     <SUITE FILE_PATH="coverage/QT_designer_python$iq_bot.coverage" NAME="iq_bot Coverage Results" MODIFIED="1636541647391" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/.." />
   </component>
   <component name="DatabaseView">
@@ -118,8 +46,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/iq_bot_ui.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="207">
-              <caret line="242" column="16" selection-start-line="242" selection-start-column="16" selection-end-line="242" selection-end-column="16" />
+            <state relative-caret-position="282">
+              <caret line="469" column="47" selection-start-line="469" selection-start-column="47" selection-end-line="469" selection-end-column="47" />
               <folding>
                 <element signature="e#0#42#0" expanded="true" />
                 <element signature="e#26124#26155#0" />
@@ -367,7 +295,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.25799572" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -543,8 +470,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/iq_bot_ui.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="207">
-          <caret line="242" column="16" selection-start-line="242" selection-start-column="16" selection-end-line="242" selection-end-column="16" />
+        <state relative-caret-position="282">
+          <caret line="469" column="47" selection-start-line="469" selection-start-column="47" selection-end-line="469" selection-end-column="47" />
           <folding>
             <element signature="e#0#42#0" expanded="true" />
             <element signature="e#26124#26155#0" />

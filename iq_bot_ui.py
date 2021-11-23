@@ -160,28 +160,45 @@ class Ui_IqOptionBot(object):
         self.groupBox_3.setTitle(_translate("IqOptionBot", "Google Spread Sheet Key"))
 
     def login(self):
-        self.lineEdit_3.setText('Logging');
+        self.lineEdit_3.setText('Logging')
+        self.lineEdit_3.setStyleSheet("color:rgb(85, 170, 0);")
         self.lineEdit_3.repaint()
         self.pushButton.setEnabled(False)
         username = self.lineEdit.text().strip()
         password = self.lineEdit_2.text().strip()
-        self.API_connection = IQ_Option('Fserranovieira@hotmail.com', '@Laila241186')
-        iqch1, iqch2 = self.API_connection.connect()  # connect to iqoption
-        self.balance_type = "PRACTICE"
-        self.API_connection.change_balance(self.balance_type)
-        if iqch1 == True:
-            self.lineEdit_3.setText('Success')
-            self.lineEdit_3.setStyleSheet("color:rgb(85, 170, 0);")
-            self.pushButton_2.setEnabled(True)
-            self.pushButton_2.setStyleSheet("QPushButton#pushButton_2 {\n     background-color:rgb(85, 170, 0);\n     border-radius:5;\n     color:rgb(255, 255, 255);\n}\n\n\nQPushButton#pushButton_2:hover {\n     background-color:rgb(85, 170, 200);\n     cusor:pointer\n}\n")
-            self.pushButton_2.setCursor(QCursor(QtCore.Qt.PointingHandCursor))
-            self.pushButton_3.setEnabled(True)
-            self.pushButton_3.setStyleSheet("QPushButton#pushButton_3 {\n     background-color:rgb(217, 0, 3);\n     border-radius:5;\n     color:rgb(255, 255, 255);\n}\n\n\nQPushButton#pushButton_3:hover {\n     background-color:rgb(85, 170, 200);\n     cusor:pointer\n}\n")
-            self.pushButton_3.setCursor(QCursor(QtCore.Qt.PointingHandCursor))
-            self.pushButton.setEnabled(True)
-            self.login = True
+        try:
+            # self.API_connection = IQ_Option(username, password)
+            self.API_connection = IQ_Option('Fserranovieira@hotmail.com', '@Laila241186')
+            iqch1, iqch2 = self.API_connection.connect()  # connect to iqoption
 
-        else:
+            if iqch1 == True:
+                self.lineEdit_3.setText('Success')
+                self.lineEdit_3.setStyleSheet("color:rgb(85, 170, 0);")
+                self.pushButton_2.setEnabled(True)
+                self.pushButton_2.setStyleSheet(
+                    "QPushButton#pushButton_2 {\n     background-color:rgb(85, 170, 0);\n     border-radius:5;\n     color:rgb(255, 255, 255);\n}\n\n\nQPushButton#pushButton_2:hover {\n     background-color:rgb(85, 170, 200);\n     cusor:pointer\n}\n")
+                self.pushButton_2.setCursor(QCursor(QtCore.Qt.PointingHandCursor))
+                self.pushButton_3.setEnabled(True)
+                self.pushButton_3.setStyleSheet(
+                    "QPushButton#pushButton_3 {\n     background-color:rgb(217, 0, 3);\n     border-radius:5;\n     color:rgb(255, 255, 255);\n}\n\n\nQPushButton#pushButton_3:hover {\n     background-color:rgb(85, 170, 200);\n     cusor:pointer\n}\n")
+                self.pushButton_3.setCursor(QCursor(QtCore.Qt.PointingHandCursor))
+                self.pushButton.setEnabled(True)
+                self.login = True
+            else:
+                self.lineEdit_3.setText('Fail')
+                self.lineEdit_3.setStyleSheet("color:rgb(255, 0, 0);")
+                self.pushButton_2.setEnabled(False)
+                self.pushButton_2.setStyleSheet("background-color:rgb(85, 170, 0, 0.5);\n"
+                                                "border-radius:5;\n"
+                                                "color:rgb(255, 255, 255);")
+                self.pushButton_3.setStyleSheet("background-color:rgb(217, 0, 3, 0.5);\n"
+                                                "border-radius:5;\n"
+                                                "color:rgb(255, 255, 255);")
+                self.pushButton_3.setEnabled(False)
+                self.pushButton.setEnabled(True)
+            return
+
+        except:
             self.lineEdit_3.setText('Fail')
             self.lineEdit_3.setStyleSheet("color:rgb(255, 0, 0);")
             self.pushButton_2.setEnabled(False)
@@ -194,13 +211,10 @@ class Ui_IqOptionBot(object):
             self.pushButton_3.setEnabled(False)
             self.pushButton.setEnabled(True)
 
-        return
-
-
     def run(self):
         if not self.login:
             return
-        self.SAMPLE_SPREADSHEET_ID_input = self.lineEdit_6.text().strip()
+        # self.SAMPLE_SPREADSHEET_ID_input = self.lineEdit_6.text().strip()
         self.SAMPLE_SPREADSHEET_ID_input = '1YTQPSIGq0Wt5_5_Dan6bghDmTYl2u_zGwzA7IJH79EI'
         bot_timeinterval = self.lineEdit_4.text().strip()
         if not self.SAMPLE_SPREADSHEET_ID_input or not bot_timeinterval or not bot_timeinterval.isnumeric():
@@ -250,10 +264,15 @@ class Ui_IqOptionBot(object):
                             if row[1] == 'Open' or row[1] == 'open':
                                 if create_orderLimit > 5:
                                     continue
-                                
+                                if not row[2]:
+                                    continue
                                 if row[2] and dparser.parse(row[2]) > datetime.now():
                                     continue
-
+                                if not row[3]:
+                                    continue
+                                if not (row[3] == 'PRACTICE' or row[3] == 'REAL'):
+                                    continue
+                                account_type = row[3]
                                 # Get the instrument_type
                                 if not row[4]:
                                     continue
@@ -321,6 +340,11 @@ class Ui_IqOptionBot(object):
                                     auto_margin_call = False  # True/False
 
                                 use_token_for_commission = False  # True/False
+
+                                if self.account_type != account_type:
+                                    self.account_type = account_type
+                                    self.API_connection.change_balance(self.account_type)
+
                                 check, order_id = self.API_connection.buy_order(instrument_type=instrument_type,
                                                                                 instrument_id=instrument_id,
                                                                                 side=side, amount=amount,
@@ -401,7 +425,9 @@ class Ui_IqOptionBot(object):
                                                 "values": [[round(float(position_profit_rate), 3)]]
                                             })
                             elif row[1] == 'Active' or row[1] == 'active':
-                                if row[13] and row[13].isnumeric():
+                                if len(row) >= 14 :
+                                    if not row[13].isnumeric():
+                                        continue
                                     check, created_order_data = self.API_connection.get_position(int(row[13]))
                                     if check:
                                         position = created_order_data['position']
@@ -441,6 +467,13 @@ class Ui_IqOptionBot(object):
                                 if row[13] and row[13].isnumeric():
                                     result = self.API_connection.cancel_order(row[13])
                                     result1 = self.API_connection.close_position(row[13])
+                                    print('tete')
+                                    if result or result1:
+                                        UpdateValues.append({
+                                            "range": "TRADE2!B" + str(row_number),
+                                            "values": [['Cancelled']]
+                                        })
+
                     except NameError:
                         print(NameError.error_details)
                         continue
